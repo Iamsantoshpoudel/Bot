@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dex's Music | Free Always-On Discord Bot by Santosh Poudel</title>
+<meta name="description" content="Dex's Music is a free Discord music bot by Santosh Poudel that streams from your own private library. Auto-joins when listeners arrive, auto-leaves when they don't, and never repeats a track back-to-back.">
+<meta name="author" content="Santosh Poudel">
+<meta name="keywords" content="Santosh Poudel, Discord bot, Discord music bot, Dex's Music, free Discord bot, Discord radio bot, self-hosted Discord bot, always-on Discord bot, Node.js Discord bot">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a0a10">
+<link rel="canonical" href="https://discordbot-g4l2.onrender.com">
+<link rel="author" href="https://github.com/Iamsantoshpoudel">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dex's Music">
+<meta property="og:title" content="Dex's Music — Free Always-On Discord Bot by Santosh Poudel">
+<meta property="og:description" content="A free Discord music bot by Santosh Poudel. Streams from your own private library, auto-joins when listeners arrive, auto-leaves when they don't.">
+<meta property="og:url" content="https://discordbot-g4l2.onrender.com">
+<meta property="og:image" content="https://discordbot-g4l2.onrender.comog-image.png">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dex's Music — Free Always-On Discord Bot by Santosh Poudel">
+<meta name="twitter:description" content="A free Discord music bot by Santosh Poudel. Streams from your own private library, auto-joins when listeners arrive, auto-leaves when they don't.">
+<meta name="twitter:image" content="https://discordbot-g4l2.onrender.comog-image.png">
+
+<!-- Favicon (inline, no extra request) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230a0a10'/%3E%3Cpath d='M9 18V5l12-2v13' stroke='%23ffb020' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='6' cy='18' r='3' stroke='%23ffb020' stroke-width='1.8' fill='none'/%3E%3Ccircle cx='18' cy='16' r='3' stroke='%23ffb020' stroke-width='1.8' fill='none'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Dex's Music",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Discord",
+  "description": "A free Discord music bot that streams from your own private library, auto-joining and auto-leaving voice channels as listeners come and go.",
+  "author": {
+    "@type": "Person",
+    "name": "Santosh Poudel",
+    "url": "https://github.com/Iamsantoshpoudel"
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Santosh Poudel",
+    "url": "https://github.com/Iamsantoshpoudel"
+  }
+}
+</script>
+
+<style>
+  :root{
+    --bg-void: #0a0a10;
+    --bg-panel: #131320;
+    --bg-panel-2: #1a1a2c;
+    --line: rgba(154, 150, 179, 0.14);
+    --line-strong: rgba(154, 150, 179, 0.28);
+    --accent-amber: #ffb020;
+    --accent-amber-dim: #ffb02033;
+    --accent-violet: #8b5cf6;
+    --accent-cyan: #34d3c9;
+    --text-hi: #f5f3ff;
+    --text-mid: #9a96b3;
+    --text-dim: #605c7a;
+
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+
+    --container: 1120px;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg-void);
+    color: var(--text-hi);
+    font-family: var(--body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before{
+    content:'';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.35;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  button{ font-family: inherit; cursor: pointer; }
+
+  ::selection{ background: var(--accent-violet); color: var(--text-hi); }
+
+  :focus-visible{
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap{
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position: sticky;
+    top: 18px;
+    z-index: 50;
+    padding: 0 20px;
+    margin-top: 18px;
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 12px 14px 12px 22px;
+    max-width: var(--container);
+    margin: 0 auto;
+    background: rgba(19,19,32,0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line-strong);
+    border-radius: 100px;
+    box-shadow: 0 12px 32px -16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  .brand-mark{
+    width: 26px; height: 26px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+    gap: 2px;
+  }
+  .brand-mark span{
+    background: var(--accent-amber);
+    border-radius: 1px;
+    animation: markbar 1.1s ease-in-out infinite;
+  }
+  .brand-mark span:nth-child(1){ height: 40%; animation-delay: -0.6s; background: var(--accent-violet);}
+  .brand-mark span:nth-child(2){ height: 90%; animation-delay: -0.1s; }
+  .brand-mark span:nth-child(3){ height: 60%; animation-delay: -0.9s; background: var(--accent-cyan);}
+  .brand-mark span:nth-child(4){ height: 75%; animation-delay: -0.35s; }
+  @keyframes markbar{
+    0%,100%{ transform: scaleY(0.4); }
+    50%{ transform: scaleY(1); }
+  }
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap: 32px;
+    font-size: 0.88rem;
+    color: var(--text-mid);
+  }
+  .nav-links a{ transition: color 0.2s ease; }
+  .nav-links a:hover{ color: var(--text-hi); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 9px;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .btn:active{ transform: translateY(1px) scale(0.98); }
+
+  .btn-primary{
+    background: var(--accent-amber);
+    color: #1a1206;
+    box-shadow: 0 0 0 0 var(--accent-amber-dim);
+  }
+  .btn-primary:hover{
+    box-shadow: 0 0 0 6px var(--accent-amber-dim), 0 10px 30px -8px rgba(255,176,32,0.5);
+  }
+
+  .btn-ghost{
+    background: transparent;
+    border-color: var(--line-strong);
+    color: var(--text-hi);
+  }
+  .btn-ghost:hover{ border-color: var(--accent-cyan); background: rgba(52,211,201,0.06); }
+
+  .nav-cta{ display:none; border-radius: 100px; padding: 9px 18px; }
+  @media (min-width: 720px){ .nav-cta{ display:inline-flex; } }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 76px 0 64px;
+    position: relative;
+  }
+  .on-air{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--accent-amber);
+    border: 1px solid rgba(255,176,32,0.35);
+    background: rgba(255,176,32,0.06);
+    padding: 6px 12px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .on-air .dot{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-amber);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.25; } }
+
+  h1{
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+    max-width: 15ch;
+  }
+  h1 em{
+    font-style: normal;
+    color: var(--accent-amber);
+  }
+
+  .hero-sub{
+    margin-top: 22px;
+    font-size: 1.08rem;
+    color: var(--text-mid);
+    max-width: 46ch;
+    line-height: 1.65;
+  }
+
+  .hero-actions{
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    gap: 14px;
+    margin-top: 34px;
+  }
+  .hero-actions .btn{ padding: 13px 22px; font-size: 0.95rem; }
+
+  .hero-note{
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--text-dim);
+  }
+
+  /* ---------- console panel ---------- */
+  .console{
+    margin-top: 64px;
+    background: linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+    border: 1px solid var(--line-strong);
+    border-radius: 16px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 40px 80px -40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .console-head{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .console-title{
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .console-title::after{
+    content:'';
+    display:inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 8px;
+    border-radius:50%;
+    background: var(--accent-amber);
+    vertical-align: middle;
+    animation: livepulse 1.8s ease-in-out infinite;
+  }
+  @keyframes livepulse{
+    0%,100%{ opacity:0.35; transform:scale(0.8); box-shadow:0 0 0 0 rgba(255,176,32,0); }
+    50%{ opacity:1; transform:scale(1); box-shadow:0 0 0 5px rgba(255,176,32,0.08); }
+  }
+  .console-dots{ display:flex; gap: 6px; }
+  .console-dots span{ width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+
+  .eq{
+    display:flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 96px;
+    padding: 0 2px;
+    animation: equalizerGlow 3s ease-in-out infinite;
+  }
+  .eq span{
+    flex: 1;
+    min-width: 3px;
+    border-radius: 2px 2px 0 0;
+    background: var(--accent-violet);
+    transform-origin: bottom;
+    animation: eqbar 1.2s ease-in-out infinite;
+  }
+
+  @keyframes equalizerGlow{
+    0%,100%{ opacity:0.82; }
+    50%{ opacity:1; }
+  }
+
+  @keyframes eqbar{
+    0%{ transform: scaleY(var(--min, 0.15)); }
+    50%{ transform: scaleY(var(--max, 0.9)); }
+    100%{ transform: scaleY(var(--min, 0.15)); }
+  }
+
+  .now-playing{
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .np-left{ display:flex; align-items:center; gap: 14px; min-width: 0; }
+  .np-icon{
+    width: 34px; height:34px;
+    border-radius: 8px;
+    background: rgba(139,92,246,0.14);
+    border: 1px solid rgba(139,92,246,0.35);
+    display:grid; place-items:center;
+    flex-shrink: 0;
+    animation: iconbeat 2.4s ease-in-out infinite;
+  }
+  .np-icon svg{ width: 16px; height: 16px; }
+  .np-text{ min-width: 0; }
+  .np-label{
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  #np-title{
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40ch;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #np-artist{
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    transition: opacity 0.3s ease;
+  }
+  .np-clock{
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    flex-shrink: 0;
+  }
+
+  .fade-swap{ opacity: 0; transform: translateY(3px); }
+
+  @keyframes iconbeat{
+    0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(139,92,246,0); }
+    50%{ transform:scale(1.06); box-shadow:0 0 0 6px rgba(139,92,246,0.06); }
+  }
+
+  /* ---------- readout strip ---------- */
+  .readout{
+    margin-top: 28px;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  @media (min-width: 720px){ .readout{ grid-template-columns: repeat(4, 1fr); } }
+  .readout-cell{
+    padding: 18px 20px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .readout-cell:nth-child(2n){ border-right: none; }
+  @media (min-width: 720px){
+    .readout-cell{ border-bottom: none; }
+    .readout-cell:nth-child(2n){ border-right: 1px solid var(--line); }
+    .readout-cell:last-child{ border-right: none; }
+  }
+  .readout-val{
+    font-family: var(--mono);
+    font-size: 1.15rem;
+    color: var(--accent-amber);
+  }
+  .readout-label{
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  /* ---------- section shell ---------- */
+  section{ padding: 100px 0; position: relative; }
+  .section-head{ max-width: 56ch; margin-bottom: 52px; }
+  .section-head h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+    letter-spacing: -0.015em;
+    margin-top: 10px;
+  }
+  .section-head p{
+    margin-top: 14px;
+    color: var(--text-mid);
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+
+  .reveal{
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.7s cubic-bezier(.16,.8,.28,1), transform 0.7s cubic-bezier(.16,.8,.28,1);
+  }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+
+  /* ---------- features ---------- */
+  .strip-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+  @media (min-width: 640px){ .strip-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 980px){ .strip-grid{ grid-template-columns: repeat(3, 1fr); } }
+
+  .strip{
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 30px 26px;
+    transition: background 0.25s ease;
+  }
+  .strip:hover{ background: rgba(255,255,255,0.015); }
+
+  .strip-icon{
+    width: 38px; height: 38px;
+    border-radius: 9px;
+    display:grid; place-items:center;
+    margin-bottom: 18px;
+    border: 1px solid var(--line-strong);
+  }
+  .strip-icon svg{ width: 18px; height: 18px; }
+
+  .strip h3{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: -0.005em;
+  }
+  .strip p{
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+
+  /* ---------- how it works ---------- */
+  .steps{
+    display:grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .step{
+    display:grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .step-num{
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    padding-top: 3px;
+  }
+  .step h3{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .step p{
+    margin-top: 8px;
+    color: var(--text-mid);
+    font-size: 0.95rem;
+    max-width: 60ch;
+    line-height: 1.65;
+  }
+
+  /* ---------- cta ---------- */
+  .cta-panel{
+    background: radial-gradient(120% 140% at 15% -10%, rgba(255,176,32,0.14), transparent 55%),
+                linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+    border: 1px solid var(--line-strong);
+    border-radius: 20px;
+    padding: 64px 40px;
+    text-align:center;
+  }
+  .cta-panel h2{
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+    max-width: 20ch;
+    margin: 0 auto;
+  }
+  .cta-panel p{
+    margin-top: 14px;
+    color: var(--text-mid);
+    max-width: 46ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-panel .hero-actions{ justify-content: center; margin-top: 30px; }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 40px 0;
+  }
+  .footer-inner{
+    display:flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+  @media (min-width: 720px){
+    .footer-inner{ flex-direction: row; justify-content: space-between; text-align: left; }
+  }
+  .footer-links{ display:flex; gap: 22px; }
+  .footer-links a{ color: var(--text-mid); transition: color 0.2s ease; }
+  .footer-links a:hover{ color: var(--text-hi); }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+      Dex's Music
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn btn-primary nav-cta" href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.54 5.04A16.8 16.8 0 0 0 15.4 3.76l-.5 1.02a15.2 15.2 0 0 0-5.8 0l-.5-1.02a16.8 16.8 0 0 0-4.14 1.28C2.18 8.9 1.47 12.67 1.83 16.4a16.8 16.8 0 0 0 5.1 2.58l1.24-1.7a10.3 10.3 0 0 1-1.96-.94l.48-.37c3.77 1.76 7.86 1.76 11.58 0l.48.37c-.63.37-1.28.69-1.96.94l1.24 1.7a16.8 16.8 0 0 0 5.1-2.58c.42-4.34-.72-8.07-3.59-11.36ZM8.5 14.2c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Zm7 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Z" fill="currentColor"/></svg>
+      Add to Discord
+    </a>
+  </div>
+</nav>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero">
+      <span class="on-air" id="on-air-pill" role="status"><span class="dot"></span> <span id="on-air-text">Checking signal…</span></span>
+
+      <h1>Your server's radio station, <em>always on.</em></h1>
+      <p class="hero-sub">
+        Dex's Music joins the moment someone shows up to listen, streams straight
+        from your own private library, and quietly disappears when the room
+        empties out. No commands required — just music.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.54 5.04A16.8 16.8 0 0 0 15.4 3.76l-.5 1.02a15.2 15.2 0 0 0-5.8 0l-.5-1.02a16.8 16.8 0 0 0-4.14 1.28C2.18 8.9 1.47 12.67 1.83 16.4a16.8 16.8 0 0 0 5.1 2.58l1.24-1.7a10.3 10.3 0 0 1-1.96-.94l.48-.37c3.77 1.76 7.86 1.76 11.58 0l.48.37c-.63.37-1.28.69-1.96.94l1.24 1.7a16.8 16.8 0 0 0 5.1-2.58c.42-4.34-.72-8.07-3.59-11.36ZM8.5 14.2c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Zm7 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Z" fill="currentColor"/></svg>
+          Add to Discord
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 6l-4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Run locally
+        </a>
+      </div>
+      <p class="hero-note">Free to self-host · streams from your own storage · no data resold, ever</p>
+
+      <div class="console reveal" id="console">
+        <div class="console-head">
+          <span class="console-title">Streaming / demo feed</span>
+          <span class="console-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        </div>
+        <div class="eq" id="eq" aria-hidden="true"></div>
+
+        <div class="now-playing">
+          <div class="np-left">
+            <div class="np-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="var(--accent-violet)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="var(--accent-violet)" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="var(--accent-violet)" stroke-width="1.6"/></svg>
+            </div>
+            <div class="np-text">
+              <div class="np-label">Now streaming (demo)</div>
+              <div id="np-title">Loading…</div>
+              <div id="np-artist">Connecting to library</div>
+            </div>
+          </div>
+          <div class="np-clock" id="np-clock">00:00</div>
+        </div>
+      </div>
+
+      <div class="readout reveal">
+        <div class="readout-cell"><div class="readout-val" id="stat-track-count">—</div><div class="readout-label">tracks in rotation</div></div>
+        <div class="readout-cell"><div class="readout-val" id="stat-formats">—</div><div class="readout-label">formats in your library</div></div>
+        <div class="readout-cell"><div class="readout-val">Private</div><div class="readout-label">storage, signed URLs only</div></div>
+        <div class="readout-cell"><div class="readout-val">0 MB</div><div class="readout-label">written to disk per track</div></div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-head reveal">
+        <span class="eyebrow">Features</span>
+        <h2>Built to run unattended.</h2>
+        <p>Every control here exists because something eventually goes wrong at 2am when no one's watching. Dex's Music is built to handle that without you.</p>
+      </div>
+
+      <div class="strip-grid reveal" id="feature-grid">
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(255,176,32,0.1); border-color: rgba(255,176,32,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0Z" stroke="var(--accent-amber)" stroke-width="1.6"/><path d="M12 8v4l3 2" stroke="var(--accent-amber)" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Auto-join, auto-leave</h3>
+          <p>Connects a moment after the first person arrives, and leaves quietly once the channel's empty. No one has to remember to start it.</p>
+        </div>
+
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16" stroke="var(--accent-violet)" stroke-width="1.6" stroke-linecap="round"/><path d="M17 9l3 3-3 3" stroke="var(--accent-violet)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Shuffles without repeats</h3>
+          <p>Every reshuffle checks against the last track played, so the same song never lands twice in a row.</p>
+        </div>
+
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(52,211,201,0.1); border-color: rgba(52,211,201,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4" stroke="var(--accent-cyan)" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3.4" stroke="var(--accent-cyan)" stroke-width="1.6"/></svg>
+          </div>
+          <h3>Streams, never downloads</h3>
+          <p>Tracks are transcoded on the fly straight from storage. The file never touches a disk anywhere along the way.</p>
+        </div>
+
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(255,176,32,0.1); border-color: rgba(255,176,32,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 4 6v6c0 4.4 3.2 8.3 8 9 4.8-.7 8-4.6 8-9V6l-8-3Z" stroke="var(--accent-amber)" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="var(--accent-amber)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Guarded by default</h3>
+          <p>Only members in the voice channel — or roles you choose — can control playback. Everyone else can still check what's on.</p>
+        </div>
+
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9" stroke="var(--accent-violet)" stroke-width="1.6" stroke-linecap="round"/><path d="M3 4v5h5" stroke="var(--accent-violet)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Recovers on its own</h3>
+          <p>A dropped connection or a bad file gets retried automatically. If something's really broken, it restarts clean rather than getting stuck.</p>
+        </div>
+
+        <div class="strip">
+          <div class="strip-icon" style="background: rgba(52,211,201,0.1); border-color: rgba(52,211,201,0.3);">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke="var(--accent-cyan)" stroke-width="1.6"/><path d="M4 10h16M10 10v10" stroke="var(--accent-cyan)" stroke-width="1.6"/></svg>
+          </div>
+          <h3>Your library, your rules</h3>
+          <p>Music lives in your own private storage bucket. Nothing is ever made public — the bot only ever hands out short-lived links to itself.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="section-head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Add a track, it plays. That's it.</h2>
+        <p>No admin panel, no bulk uploader to wrangle. Setup is one folder.</p>
+      </div>
+
+      <div class="steps reveal">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div>
+            <h3>Drop a file into your library</h3>
+            <p>Upload an mp3, wav, ogg, m4a, flac, aac, opus, or webm file. Name it "Artist - Title" if you want it labeled automatically.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <div>
+            <h3>Dex's Music finds it on its own</h3>
+            <p>The library is rescanned on a timer. New files are picked up and added to rotation — nothing to trigger by hand.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <div>
+            <h3>It plays when people show up</h3>
+            <p>The moment someone joins the voice channel, Dex's Music connects and starts streaming from the shuffled queue.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="add">
+      <div class="cta-panel reveal">
+        <span class="eyebrow">Get started</span>
+        <h2>Give your server a station of its own.</h2>
+        <p>Two minutes to invite. No credit card, no premium tier, no ads between tracks.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.54 5.04A16.8 16.8 0 0 0 15.4 3.76l-.5 1.02a15.2 15.2 0 0 0-5.8 0l-.5-1.02a16.8 16.8 0 0 0-4.14 1.28C2.18 8.9 1.47 12.67 1.83 16.4a16.8 16.8 0 0 0 5.1 2.58l1.24-1.7a10.3 10.3 0 0 1-1.96-.94l.48-.37c3.77 1.76 7.86 1.76 11.58 0l.48.37c-.63.37-1.28.69-1.96.94l1.24 1.7a16.8 16.8 0 0 0 5.1-2.58c.42-4.34-.72-8.07-3.59-11.36ZM8.5 14.2c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Zm7 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2 2 .99 2 2.2-.88 2.2-2 2.2Z" fill="currentColor"/></svg>
+            Add to Discord
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 6l-4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Run locally
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="section-head reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>Before you ask</h2>
+      </div>
+      <div class="steps reveal">
+        <div class="step">
+          <span class="step-num">—</span>
+          <div>
+            <h3>Where does the music actually come from?</h3>
+            <p>Whatever's in your own private storage bucket. Dex's Music doesn't ship with a library or pull from any external streaming service.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">—</span>
+          <div>
+            <h3>Can it play in more than one channel?</h3>
+            <p>Each server has one configured voice channel by design, to keep behavior predictable. Multi-channel support is a documented extension point if you self-host.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">—</span>
+          <div>
+            <h3>What happens if it crashes?</h3>
+            <p>It doesn't, quietly. Failures are logged, retried up to three times, and if that's not enough the process restarts itself cleanly instead of hanging.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© <span id="year"></span> Dex's Music. Built by <a href="https://github.com/Iamsantoshpoudel" target="_blank" rel="noopener noreferrer">Santosh Poudel</a>. Not affiliated with Discord Inc.</span>
+    <div class="footer-links">
+      <a href="https://github.com/Iamsantoshpoudel/DiscordBOT" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="#faq">FAQ</a>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- build the equalizer bars ----
+  var eq = document.getElementById('eq');
+  var barCount = 40;
+  var palette = ['var(--accent-violet)', 'var(--accent-cyan)', 'var(--accent-amber)'];
+  var eqFrag = document.createDocumentFragment();
+  for (var i = 0; i < barCount; i++) {
+    var bar = document.createElement('span');
+    var min = (Math.random() * 0.18 + 0.06).toFixed(2);
+    var max = (Math.random() * 0.55 + 0.4).toFixed(2);
+    var duration = (Math.random() * 0.9 + 0.7).toFixed(2);
+    var delay = (Math.random() * -2).toFixed(2);
+    bar.style.setProperty('--min', min);
+    bar.style.setProperty('--max', max);
+    bar.style.animationDuration = duration + 's';
+    bar.style.animationDelay = delay + 's';
+    bar.style.background = palette[i % palette.length];
+    eqFrag.appendChild(bar);
+  }
+  eq.appendChild(eqFrag);
+
+  // ---- demo "now playing" feed ----
+  // This is illustrative only: it simulates a live radio feed locally so the
+  // hero console has something to show. Wire fetchNowPlaying()/fetchLibraryStats()
+  // up to your real bot's API before shipping.
+  var demoSongs = [
+    { title: 'Tum Hi Ho', artist: 'Arijit Singh', duration_seconds: 262 },
+    { title: 'Kesariya', artist: 'Arijit Singh', duration_seconds: 268 },
+    { title: 'Chaleya', artist: 'Arijit Singh, Shilpa Rao', duration_seconds: 205 },
+    { title: 'Apna Bana Le', artist: 'Arijit Singh', duration_seconds: 261 },
+    { title: 'Heeriye', artist: 'Jasleen Royal, Arijit Singh', duration_seconds: 220 },
+    { title: 'O Maahi', artist: 'Arijit Singh', duration_seconds: 224 },
+    { title: 'Tere Vaaste', artist: 'Varun Jain, Shadab Faridi, Altamash Faridi', duration_seconds: 216 },
+    { title: 'Raataan Lambiyan', artist: 'Jubin Nautiyal, Asees Kaur', duration_seconds: 230 },
+    { title: 'Ranjha', artist: 'B Praak, Jasleen Royal', duration_seconds: 224 },
+    { title: 'Satranga', artist: 'Arijit Singh', duration_seconds: 271 },
+    { title: 'Pehle Bhi Main', artist: 'Vishal Mishra', duration_seconds: 246 },
+    { title: 'Sajni', artist: 'Arijit Singh', duration_seconds: 239 }
+  ];
+  var demoTrackLength = 8 * 60;
+  var demoState = null; // { index, startedAt } — kept in memory for this session only
+  var lastSongIndex = -1;
+
+  function demoFetch(endpoint) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        if (endpoint === 'now-playing') {
+          var active = demoState
+            && (Date.now() - new Date(demoState.startedAt).getTime()) / 1000 < demoTrackLength;
+
+          if (!active) {
+            var nextIndex = Math.floor(Math.random() * demoSongs.length);
+            while (demoSongs.length > 1 && nextIndex === lastSongIndex) {
+              nextIndex = Math.floor(Math.random() * demoSongs.length);
+            }
+            demoState = { index: nextIndex, startedAt: new Date().toISOString() };
+          }
+          lastSongIndex = demoState.index;
+          var song = demoSongs[demoState.index];
+          resolve({ ok: true, json: function () {
+            return Promise.resolve([Object.assign({}, song, {
+              duration_seconds: demoTrackLength,
+              played_at: demoState.startedAt
+            })]);
+          }});
+          return;
+        }
+        resolve({ ok: true, json: function () { return Promise.resolve(demoSongs); } });
+      }, 350);
+    });
+  }
+
+  var titleEl = document.getElementById('np-title');
+  var artistEl = document.getElementById('np-artist');
+  var clockEl = document.getElementById('np-clock');
+  var onAirPill = document.getElementById('on-air-pill');
+  var onAirText = document.getElementById('on-air-text');
+
+  var currentPlayedAt = null;
+  var elapsedTimer = null;
+
+  function formatClock(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    var m = String(Math.floor(sec / 60)).padStart(2, '0');
+    var s = String(sec % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+
+  function setPill(state, label) {
+    onAirText.textContent = label;
+    onAirPill.style.color = state === 'live' ? 'var(--accent-amber)' : 'var(--text-dim)';
+    onAirPill.style.borderColor = state === 'live' ? 'rgba(255,176,32,0.35)' : 'var(--line-strong)';
+  }
+
+  function fetchNowPlaying() {
+    demoFetch('now-playing').then(function (res) {
+      return res.json();
+    }).then(function (rows) {
+      var row = rows && rows[0];
+
+      if (!row) {
+        setPill('offline', 'Library is empty');
+        titleEl.textContent = 'Nothing to play yet';
+        artistEl.textContent = 'Upload a track to get started';
+        clearInterval(elapsedTimer);
+        clockEl.textContent = '--:--';
+        return;
+      }
+
+      var playedAt = new Date(row.played_at).getTime();
+      var durationSec = row.duration_seconds || 240;
+      var elapsedSec = (Date.now() - playedAt) / 1000;
+      var isCurrentlyPlaying = elapsedSec < durationSec + 30;
+
+      if (!isCurrentlyPlaying) {
+        setPill('offline', 'Off air right now');
+        titleEl.textContent = 'Nobody\u2019s listening';
+        artistEl.textContent = 'Last played: ' + row.title + ' — ' + row.artist;
+        clearInterval(elapsedTimer);
+        clockEl.textContent = '--:--';
+        return;
+      }
+
+      setPill('live', 'ON AIR — LIVE');
+      if (titleEl.textContent !== row.title) {
+        titleEl.classList.add('fade-swap');
+        artistEl.classList.add('fade-swap');
+        setTimeout(function () {
+          titleEl.textContent = row.title;
+          artistEl.textContent = row.artist;
+          titleEl.classList.remove('fade-swap');
+          artistEl.classList.remove('fade-swap');
+        }, 250);
+      }
+
+      currentPlayedAt = playedAt;
+      clearInterval(elapsedTimer);
+      clockEl.textContent = formatClock(0);
+      elapsedTimer = setInterval(function () {
+        clockEl.textContent = formatClock((Date.now() - currentPlayedAt) / 1000);
+      }, 1000);
+    }).catch(function (err) {
+      setPill('offline', 'Signal unavailable');
+      titleEl.textContent = 'Could not reach the library';
+      artistEl.textContent = 'Check your bot API connection';
+      console.warn('now-playing fetch failed:', err);
+    });
+  }
+
+  function fetchLibraryStats() {
+    demoFetch('library').then(function (res) {
+      return res.json();
+    }).then(function (rows) {
+      document.getElementById('stat-track-count').textContent = rows.length;
+      document.getElementById('stat-formats').textContent = '8 supported';
+    }).catch(function (err) {
+      document.getElementById('stat-track-count').textContent = '—';
+      document.getElementById('stat-formats').textContent = '—';
+      console.warn('library stats fetch failed:', err);
+    });
+  }
+
+  fetchNowPlaying();
+  fetchLibraryStats();
+  setInterval(fetchNowPlaying, 8 * 60 * 1000);
+  setInterval(fetchLibraryStats, 60000);
+
+  // ---- scroll reveal ----
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+
+</body>
+</html>
